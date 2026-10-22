@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAK PIZZA HUB | Fresh & Hot</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Poppins (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --warm-red: #D62828;
+      --deep-orange: #F77F00;
+      --cream: #FFF8F0;
+      --charcoal: #1A1A1A;
+      --golden: #FCBF49;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--cream);
+      color: var(--charcoal);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    a, button, .card-hover { transition: all 0.25s ease-in-out; }
+
+    .navbar-scrolled {
+      background-color: rgba(255, 248, 240, 0.85) !important;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-badge { transition: transform 0.2s ease; }
+
+    .btn-primary {
+      background-color: var(--warm-red);
+      color: white;
+      font-weight: 600;
+      border-radius: 9999px;
+      padding: 0.75rem 1.75rem;
+      box-shadow: 0 4px 14px rgba(214, 40, 40, 0.3);
+    }
+    .btn-primary:hover {
+      background-color: #b51f1f;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(214, 40, 40, 0.4);
+    }
+
+    .btn-outline {
+      border: 2px solid var(--charcoal);
+      color: var(--charcoal);
+      font-weight: 600;
+      border-radius: 9999px;
+      padding: 0.75rem 1.75rem;
+    }
+    .btn-outline:hover {
+      background-color: var(--charcoal);
+      color: var(--cream);
+    }
+
+    .menu-card { transition: all 0.25s ease; }
+    .menu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #FFF8F0 0%, #FFEAD8 100%);
+    }
+
+    .golden-underline {
+      background: linear-gradient(90deg, var(--golden) 0%, var(--deep-orange) 100%);
+      height: 4px;
+      width: 70px;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #f1ece6; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--warm-red);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #b51f1f; }
+
+    /* Cart drawer */
+    .cart-overlay {
+      background: rgba(0,0,0,0.45);
+      transition: opacity 0.3s ease;
+    }
+    .cart-drawer {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    /* Checkout modal */
+    .modal-overlay {
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- ========== STICKY NAVBAR ========== -->
+  <header id="navbar" class="sticky top-0 z-50 transition-all duration-300 bg-[#FFF8F0]/90 backdrop-blur-sm border-b border-[#EAD9C6]/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="#" class="flex items-center gap-2 text-2xl sm:text-3xl font-extrabold font-heading tracking-tight text-[#1A1A1A]">
+          <span class="text-3xl sm:text-4xl">🍕</span>
+          <span>HAK <span class="text-[#D62828]">PIZZA</span> HUB</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8 text-[#1A1A1A] font-medium">
+          <a href="#home" class="hover:text-[#D62828] transition">Home</a>
+          <a href="#menu" class="hover:text-[#D62828] transition">Menu</a>
+          <a href="#build" class="hover:text-[#D62828] transition">Build</a>
+          <a href="#about" class="hover:text-[#D62828] transition">About</a>
+          <a href="#contact" class="hover:text-[#D62828] transition">Contact</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+          <!-- Cart icon -->
+          <button id="cart-btn" class="relative p-2 rounded-full hover:bg-[#F77F00]/10 transition" aria-label="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span id="cart-badge" class="cart-badge absolute -top-1 -right-1 bg-[#D62828] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md hidden">0</span>
+          </button>
+
+          <a href="#menu" class="hidden sm:inline-block btn-primary text-sm uppercase tracking-wide">Order Now</a>
+
+          <button id="hamburger" class="md:hidden p-2 rounded-lg hover:bg-[#F77F00]/10 transition" aria-label="Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="hidden md:hidden pb-6 pt-2 flex flex-col gap-3 text-lg font-medium border-t border-[#EAD9C6]/50 mt-1">
+        <a href="#home" class="px-2 py-1 hover:text-[#D62828]">Home</a>
+        <a href="#menu" class="px-2 py-1 hover:text-[#D62828]">Menu</a>
+        <a href="#build" class="px-2 py-1 hover:text-[#D62828]">Build</a>
+        <a href="#about" class="px-2 py-1 hover:text-[#D62828]">About</a>
+        <a href="#contact" class="px-2 py-1 hover:text-[#D62828]">Contact</a>
+        <a href="#menu" class="mt-2 btn-primary text-center text-sm uppercase tracking-wide w-full">Order Now</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section id="home" class="hero-gradient relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6 text-center md:text-left">
+          <div class="inline-block bg-[#FCBF49]/20 px-4 py-1.5 rounded-full text-sm font-semibold text-[#D62828] tracking-wide">
+            🔥 Hot & Fresh — Since 2015
+          </div>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-heading leading-tight text-[#1A1A1A]">
+            Slice Into <span class="text-[#D62828]">Happiness</span> at HAK PIZZA HUB
+          </h1>
+          <p class="text-lg text-[#2E2E2E]/80 max-w-lg mx-auto md:mx-0">
+            Handcrafted pizzas with dough made fresh daily, premium toppings, and a whole lot of love.
+            Your next favorite slice is just a click away.
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
+            <a href="#menu" class="btn-primary text-base">Explore Menu</a>
+            <a href="#build" class="btn-outline text-base">Build Your Own</a>
+          </div>
+          <div class="flex flex-wrap gap-6 justify-center md:justify-start pt-6 text-sm text-[#2E2E2E]/70">
+            <div class="flex items-center gap-2"><span class="text-[#F77F00] text-xl">⏱️</span> 30 min delivery</div>
+            <div class="flex items-center gap-2"><span class="text-[#F77F00] text-xl">🌿</span> 100% fresh</div>
+            <div class="flex items-center gap-2"><span class="text-[#F77F00] text-xl">⭐</span> 4.9 (2k+ reviews)</div>
+          </div>
+        </div>
+        <div class="relative flex justify-center">
+          <div class="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[#F77F00]/10 absolute -top-6 -right-6 blur-2xl"></div>
+          <div class="relative bg-white rounded-[2rem] shadow-2xl p-4 rotate-2 hover:rotate-0 transition duration-500">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop"
+                 alt="Delicious pizza"
+                 class="w-64 h-64 sm:w-80 sm:h-80 object-cover rounded-2xl">
+            <div class="absolute -bottom-4 -left-4 bg-[#FCBF49] text-[#1A1A1A] font-bold py-2 px-4 rounded-xl shadow-lg text-sm">
+              🍕 From $9.99
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="h-8 w-full bg-[#FFF8F0] rounded-t-[100%]"></div>
+  </section>
+
+  <!-- ========== MENU SECTION ========== -->
+  <section id="menu" class="py-16 md:py-24 bg-[#FFF8F0]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <span class="text-[#D62828] font-semibold tracking-wide text-sm uppercase">Our Menu</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold font-heading mt-2 text-[#1A1A1A]">Fan-Favorite Pizzas</h2>
+        <div class="golden-underline mx-auto mt-3"></div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <!-- Pizza 1 -->
+        <div class="menu-card bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+          <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=600&auto=format&fit=crop" alt="Margherita" class="h-48 w-full object-cover">
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-xl text-[#1A1A1A]">Margherita</h3>
+              <span class="text-[#D62828] font-bold text-lg">$11.90</span>
+            </div>
+            <p class="text-sm text-[#2E2E2E]/70 mt-1 flex-grow">Tomato, mozzarella, fresh basil, olive oil.</p>
+            <button class="mt-4 add-to-cart w-full bg-[#D62828]/10 hover:bg-[#D62828] text-[#D62828] hover:text-white font-semibold py-2 rounded-xl transition text-sm"
+                    data-name="Margherita" data-price="11.90">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Pizza 2 -->
+        <div class="menu-card bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop" alt="Pepperoni" class="h-48 w-full object-cover">
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-xl text-[#1A1A1A]">Pepperoni</h3>
+              <span class="text-[#D62828] font-bold text-lg">$13.90</span>
+            </div>
+            <p class="text-sm text-[#2E2E2E]/70 mt-1 flex-grow">Double pepperoni, mozzarella, tomato sauce.</p>
+            <button class="mt-4 add-to-cart w-full bg-[#D62828]/10 hover:bg-[#D62828] text-[#D62828] hover:text-white font-semibold py-2 rounded-xl transition text-sm"
+                    data-name="Pepperoni" data-price="13.90">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Pizza 3 -->
+        <div class="menu-card bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+          <img src="https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?q=80&w=600&auto=format&fit=crop" alt="Hawaiian" class="h-48 w-full object-cover">
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-xl text-[#1A1A1A]">Hawaiian</h3>
+              <span class="text-[#D62828] font-bold text-lg">$14.50</span>
+            </div>
+            <p class="text-sm text-[#2E2E2E]/70 mt-1 flex-grow">Ham, pineapple, mozzarella, tomato sauce.</p>
+            <button class="mt-4 add-to-cart w-full bg-[#D62828]/10 hover:bg-[#D62828] text-[#D62828] hover:text-white font-semibold py-2 rounded-xl transition text-sm"
+                    data-name="Hawaiian" data-price="14.50">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- Pizza 4 -->
+        <div class="menu-card bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+          <img src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=600&auto=format&fit=crop" alt="Veggie Supreme" class="h-48 w-full object-cover">
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-xl text-[#1A1A1A]">Veggie Supreme</h3>
+              <span class="text-[#D62828] font-bold text-lg">$15.20</span>
+            </div>
+            <p class="text-sm text-[#2E2E2E]/70 mt-1 flex-grow">Bell peppers, olives, onions, mushrooms, tomatoes.</p>
+            <button class="mt-4 add-to-cart w-full bg-[#D62828]/10 hover:bg-[#D62828] text-[#D62828] hover:text-white font-semibold py-2 rounded-xl transition text-sm"
+                    data-name="Veggie Supreme" data-price="15.20">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="#" class="inline-block text-[#D62828] font-semibold underline underline-offset-4 hover:text-[#F77F00] transition">View full menu →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BUILD YOUR OWN ========== -->
+  <section id="build" class="py-16 md:py-24 bg-[#FFF8F0] border-y border-[#EAD9C6]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div class="lg:w-1/2">
+          <span class="text-[#F77F00] font-semibold tracking-wide text-sm uppercase">Custom Creations</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold font-heading mt-2 text-[#1A1A1A]">Build Your Own Pizza</h2>
+          <div class="golden-underline mt-3"></div>
+          <p class="text-[#2E2E2E]/80 mt-5 text-lg">Pick your crust, sauce, cheese, and favorite toppings. We'll fire it up to perfection. Your pizza, your rules.</p>
+          <ul class="mt-6 space-y-3">
+            <li class="flex items-center gap-3"><span class="text-[#D62828] text-xl">✓</span> Choose from 5 crusts & 6 sauces</li>
+            <li class="flex items-center gap-3"><span class="text-[#D62828] text-xl">✓</span> 20+ premium toppings</li>
+            <li class="flex items-center gap-3"><span class="text-[#D62828] text-xl">✓</span> Gluten-free & vegan options</li>
+          </ul>
+          <button id="start-build-btn" class="mt-8 btn-primary text-base">Start Building →</button>
+        </div>
+        <div class="lg:w-1/2 bg-white p-6 rounded-2xl shadow-xl border border-[#EAD9C6]/40">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🍅 Tomato</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🧀 Mozzarella</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🍄 Mushrooms</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🫒 Olives</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🌶️ Jalapeños</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🍍 Pineapple</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🥓 Bacon</div>
+            <div class="bg-[#FFF8F0] p-3 rounded-xl text-center font-medium">🧅 Onions</div>
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="font-bold text-[#1A1A1A]">Total: $12.90</span>
+            <button id="build-add-btn" class="bg-[#FCBF49] hover:bg-[#F77F00] text-[#1A1A1A] font-bold py-2 px-5 rounded-xl transition text-sm"
+                    data-name="Custom Build Pizza" data-price="12.90">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT SECTION ========== -->
+  <section id="about" class="py-16 md:py-24 bg-[#FFF8F0]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="order-2 md:order-1">
+          <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop" alt="Our pizza kitchen" class="rounded-2xl shadow-xl w-full h-80 object-cover">
+        </div>
+        <div class="order-1 md:order-2">
+          <span class="text-[#D62828] font-semibold tracking-wide text-sm uppercase">Our Story</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold font-heading mt-2 text-[#1A1A1A]">Crafted with Passion, Served with Love</h2>
+          <div class="golden-underline mt-3"></div>
+          <p class="text-[#2E2E2E]/80 mt-5 text-lg">HAK PIZZA HUB started in 2015 with one goal: to make the best pizza in town using locally sourced ingredients and time-honored techniques.</p>
+          <p class="text-[#2E2E2E]/70 mt-4">Every pizza is hand-stretched, topped generously, and baked in our stone oven for that perfect crispy-yet-chewy crust. We're not just a pizza shop — we're a community hub.</p>
+          <div class="mt-8 flex flex-wrap gap-6">
+            <div><span class="block text-3xl font-extrabold text-[#D62828]">10k+</span> <span class="text-sm text-[#2E2E2E]/70">Happy customers</span></div>
+            <div><span class="block text-3xl font-extrabold text-[#D62828]">15+</span> <span class="text-sm text-[#2E2E2E]/70">Signature recipes</span></div>
+            <div><span class="block text-3xl font-extrabold text-[#D62828]">100%</span> <span class="text-sm text-[#2E2E2E]/70">Fresh ingredients</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT / CTA SECTION ========== -->
+  <section id="contact" class="py-16 md:py-24 bg-[#1A1A1A] text-[#FFF8F0]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-[#FCBF49] font-semibold tracking-wide text-sm uppercase">Contact & Orders</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold font-heading mt-2">Ready to Order?</h2>
+        <div class="golden-underline mx-auto mt-3"></div>
+        <p class="text-[#FFF8F0]/70 mt-4 max-w-2xl mx-auto">Call us, drop by, or order online. We're here to serve you the best pizza in town.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div class="bg-[#2A2A2A] p-6 rounded-2xl text-center">
+          <span class="text-3xl block mb-2">📍</span>
+          <h3 class="font-bold text-xl">Visit Us</h3>
+         <p>
+  <a href="https://maps.app.goo.gl/68iEDPZJGTSkMPi18"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="text-[#FCBF49] underline">
+    📍 Find us on Google Maps
+  </a>
+</p>
+        </div>
+        <div class="bg-[#2A2A2A] p-6 rounded-2xl text-center">
+          <span class="text-3xl block mb-2">📞</span>
+          <h3 class="font-bold text-xl">Call Us</h3>
+          <p class="text-[#FFF8F0]/70 mt-1">
+            <a href="tel:0884552508" class="text-[#FCBF49] underline">
+              (+855) 884552508
+            </a>
+          </p>
+        </div>
+        <div class="bg-[#2A2A2A] p-6 rounded-2xl text-center">
+          <span class="text-3xl block mb-2">✉️</span>
+          <h3 class="font-bold text-xl">Email</h3>
+          <p class="text-[#FFF8F0]/70 mt-1">
+            <a href="mailto:yan.kimhak0510@gmail.com" class="text-[#FCBF49] underline">
+              yan.kimhak0510@gmail.com
+            </a>
+          </p>                          
+        </div>
+      </div>
+      <div class="mt-12 flex justify-center">
+        <a href="#menu" class="btn-primary text-lg px-10 py-3">Order Online Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-[#0F0F0F] text-[#FFF8F0]/60 py-8 border-t border-[#2A2A2A]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2 text-xl font-bold text-white">
+        <span class="text-2xl">🍕</span> HAK PIZZA HUB
+      </div>
+      <p class="text-sm">© 2025 HAK PIZZA HUB. All rights reserved.</p>
+      <div class="flex gap-5 text-sm">
+        <a href="#" class="hover:text-[#FCBF49]">Privacy</a>
+        <a href="#" class="hover:text-[#FCBF49]">Terms</a>
+        <a link href=" https://t.me/Yankimhak" target="_blank" class="hover:text-[#FCBF49]">Telegram</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== CART DRAWER ========== -->
+  <div id="cart-overlay" class="fixed inset-0 z-[60] cart-overlay opacity-0 pointer-events-none"></div>
+  <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] cart-drawer transform translate-x-full flex flex-col">
+    <div class="flex items-center justify-between p-5 border-b border-[#EAD9C6]">
+      <h3 class="text-xl font-bold font-heading">Your Cart</h3>
+      <button id="close-cart" class="p-2 rounded-full hover:bg-gray-100 transition" aria-label="Close cart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
+      <!-- items injected by JS -->
+    </div>
+
+    <div class="p-5 border-t border-[#EAD9C6] bg-[#FFF8F0]">
+      <div class="flex justify-between items-center mb-4">
+        <span class="font-semibold text-lg">Total</span>
+        <span id="cart-total" class="font-extrabold text-xl text-[#D62828]">$0.00</span>
+      </div>
+      <button id="checkout-btn" class="w-full btn-primary text-center py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+        Proceed to Checkout
+      </button>
+      <p class="text-center text-xs text-gray-500 mt-3">Order will be sent to Telegram</p>
+    </div>
+  </div>
+
+  <!-- ========== CHECKOUT MODAL ========== -->
+  <div id="checkout-modal" class="fixed inset-0 z-[80] modal-overlay hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-5 border-b">
+        <h3 class="text-xl font-bold font-heading">Checkout</h3>
+        <button id="close-checkout" class="p-2 rounded-full hover:bg-gray-100 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="checkout-form" class="p-5 space-y-4">
+        <div>
+          <label class="block text-sm font-semibold mb-1">Full Name *</label>
+          <input type="text" id="customer-name" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D62828]" placeholder="Yan Kimhak">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Phone Number *</label>
+          <input type="tel" id="customer-phone" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D62828]" placeholder="+855 12 345 678">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Delivery Address *</label>
+          <textarea id="customer-address" required rows="2" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D62828]" placeholder="Street, Village, City"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Notes (optional)</label>
+          <textarea id="customer-notes" rows="2" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D62828]" placeholder="Extra cheese, no onions..."></textarea>
+        </div>
+
+        <div class="bg-[#FFF8F0] rounded-xl p-4">
+          <p class="font-semibold mb-2">Order Summary</p>
+          <div id="checkout-summary" class="text-sm space-y-1 text-gray-700"></div>
+          <div class="flex justify-between mt-3 pt-2 border-t border-[#EAD9C6] font-bold">
+            <span>Total</span>
+            <span id="checkout-total" class="text-[#D62828]">$0.00</span>
+          </div>
+        </div>
+
+        <button type="submit" id="place-order-btn" class="w-full btn-primary py-3 text-base">
+          Place Order → Send to Telegram
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] bg-[#1A1A1A] text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium opacity-0 pointer-events-none transition-opacity duration-300">
+    Added to cart!
+  </div>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    (function() {
+      // ==================== CONFIG ====================
+      // ⚠️ REPLACE these with your real values from @BotFather
+      const TELEGRAM_BOT_TOKEN = "8780839861:AAH8iD4vfOKKrMiAzZ1v2Ljw9m_TfEY_FxA";   // e.g. "7123456789:AAHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      const TELEGRAM_CHAT_ID   = "1982925365";            // Your Telegram user ID
+
+      // ==================== STATE ====================
+      let cart = JSON.parse(localStorage.getItem("hakPizzaCart") || "[]");
+
+      // ==================== DOM ====================
+      const navbar = document.getElementById("navbar");
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const cartBtn = document.getElementById("cart-btn");
+      const cartBadge = document.getElementById("cart-badge");
+      const cartOverlay = document.getElementById("cart-overlay");
+      const cartDrawer = document.getElementById("cart-drawer");
+      const closeCart = document.getElementById("close-cart");
+      const cartItemsEl = document.getElementById("cart-items");
+      const cartTotalEl = document.getElementById("cart-total");
+      const checkoutBtn = document.getElementById("checkout-btn");
+      const checkoutModal = document.getElementById("checkout-modal");
+      const closeCheckout = document.getElementById("close-checkout");
+      const checkoutForm = document.getElementById("checkout-form");
+      const checkoutSummary = document.getElementById("checkout-summary");
+      const checkoutTotal = document.getElementById("checkout-total");
+      const toast = document.getElementById("toast");
+
+      // ==================== HELPERS ====================
+      function saveCart() {
+        localStorage.setItem("hakPizzaCart", JSON.stringify(cart));
+      }
+
+      function getCartCount() {
+        return cart.reduce((sum, item) => sum + item.qty, 0);
+      }
+
+      function getCartTotal() {
+        return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      }
+
+      function formatMoney(n) {
+        return "$" + n.toFixed(2);
+      }
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.remove("opacity-0", "pointer-events-none");
+        toast.classList.add("opacity-100");
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "pointer-events-none");
+          toast.classList.remove("opacity-100");
+        }, 2200);
+      }
+
+      function updateBadge() {
+        const count = getCartCount();
+        cartBadge.textContent = count;
+        if (count > 0) {
+          cartBadge.classList.remove("hidden");
+          cartBadge.style.transform = "scale(1.35)";
+          setTimeout(() => cartBadge.style.transform = "scale(1)", 200);
+        } else {
+          cartBadge.classList.add("hidden");
+        }
+      }
+
+      function renderCart() {
+        if (cart.length === 0) {
+          cartItemsEl.innerHTML = `
+            <div class="text-center py-16 text-gray-400">
+              <div class="text-5xl mb-3">🛒</div>
+              <p class="font-medium">Your cart is empty</p>
+              <p class="text-sm mt-1">Add some delicious pizza!</p>
+            </div>`;
+          checkoutBtn.disabled = true;
+        } else {
+          cartItemsEl.innerHTML = cart.map((item, idx) => `
+            <div class="flex gap-3 items-center bg-[#FFF8F0] rounded-xl p-3">
+              <div class="flex-1">
+                <p class="font-semibold text-[#1A1A1A]">${item.name}</p>
+                <p class="text-sm text-[#D62828] font-medium">${formatMoney(item.price)}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="qty-btn w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center font-bold text-lg hover:bg-gray-100" data-idx="${idx}" data-delta="-1">−</button>
+                <span class="w-6 text-center font-semibold">${item.qty}</span>
+                <button class="qty-btn w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center font-bold text-lg hover:bg-gray-100" data-idx="${idx}" data-delta="1">+</button>
+              </div>
+              <button class="remove-btn p-1.5 text-gray-400 hover:text-red-500 transition" data-idx="${idx}" aria-label="Remove">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          `).join("");
+          checkoutBtn.disabled = false;
+        }
+        cartTotalEl.textContent = formatMoney(getCartTotal());
+        updateBadge();
+      }
+
+      function openCart() {
+        cartOverlay.classList.remove("opacity-0", "pointer-events-none");
+        cartDrawer.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeCartDrawer() {
+        cartOverlay.classList.add("opacity-0", "pointer-events-none");
+        cartDrawer.classList.remove("open");
+        document.body.style.overflow = "";
+      }
+
+      function openCheckout() {
+        checkoutSummary.innerHTML = cart.map(item =>
+          `<div class="flex justify-between"><span>${item.qty}× ${item.name}</span><span>${formatMoney(item.price * item.qty)}</span></div>`
+        ).join("");
+        checkoutTotal.textContent = formatMoney(getCartTotal());
+        checkoutModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeCheckoutModal() {
+        checkoutModal.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+
+      // ==================== ADD TO CART ====================
+      function addToCart(name, price) {
+        const existing = cart.find(i => i.name === name);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          cart.push({ name, price: parseFloat(price), qty: 1 });
+        }
+        saveCart();
+        renderCart();
+        showToast(`🍕 ${name} added to cart`);
+      }
+
+      // ==================== TELEGRAM SEND ====================
+      async function sendOrderToTelegram(orderData) {
+        if (TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+          alert("⚠️ Please set your TELEGRAM_BOT_TOKEN in the JavaScript code first!\n\nGet it from @BotFather on Telegram.");
+          return false;
+        }
+
+        const itemsText = orderData.items.map(i =>
+          `• ${i.qty}× ${i.name} — $${(i.price * i.qty).toFixed(2)}`
+        ).join("\n");
+
+        const message = `
+🍕 *NEW ORDER – HAK PIZZA HUB*
+━━━━━━━━━━━━━━━━━━━━
+👤 *Customer:* ${orderData.name}
+📞 *Phone:* ${orderData.phone}
+📍 *Address:* ${orderData.address}
+${orderData.notes ? `📝 *Notes:* ${orderData.notes}` : ""}
+
+🛒 *Items:*
+${itemsText}
+
+💰 *Total:* $${orderData.total.toFixed(2)}
+🕐 *Time:* ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━
+        `.trim();
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_CHAT_ID,
+              text: message,
+              parse_mode: "Markdown"
+            })
+          });
+          const data = await res.json();
+          return data.ok === true;
+        } catch (err) {
+          console.error("Telegram error:", err);
+          return false;
+        }
+      }
+
+      // ==================== EVENT LISTENERS ====================
+      // Sticky navbar
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 20) navbar.classList.add("navbar-scrolled");
+        else navbar.classList.remove("navbar-scrolled");
+      });
+
+      // Mobile menu
+      hamburger.addEventListener("click", e => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle("hidden");
+      });
+      mobileMenu.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+      });
+      document.addEventListener("click", e => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+          mobileMenu.classList.add("hidden");
+        }
+      });
+
+      // Add to cart buttons (menu + build)
+      document.querySelectorAll(".add-to-cart, #build-add-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault();
+          const name = btn.dataset.name;
+          const price = btn.dataset.price;
+          addToCart(name, price);
+        });
+      });
+
+      // Cart open/close
+      cartBtn.addEventListener("click", openCart);
+      closeCart.addEventListener("click", closeCartDrawer);
+      cartOverlay.addEventListener("click", closeCartDrawer);
+
+      // Qty + remove (event delegation)
+      cartItemsEl.addEventListener("click", e => {
+        const qtyBtn = e.target.closest(".qty-btn");
+        const removeBtn = e.target.closest(".remove-btn");
+        if (qtyBtn) {
+          const idx = +qtyBtn.dataset.idx;
+          const delta = +qtyBtn.dataset.delta;
+          cart[idx].qty += delta;
+          if (cart[idx].qty <= 0) cart.splice(idx, 1);
+          saveCart();
+          renderCart();
+        }
+        if (removeBtn) {
+          const idx = +removeBtn.dataset.idx;
+          cart.splice(idx, 1);
+          saveCart();
+          renderCart();
+        }
+      });
+
+      // Checkout
+      checkoutBtn.addEventListener("click", () => {
+        closeCartDrawer();
+        openCheckout();
+      });
+      closeCheckout.addEventListener("click", closeCheckoutModal);
+      checkoutModal.addEventListener("click", e => {
+        if (e.target === checkoutModal) closeCheckoutModal();
+      });
+
+      // Place order
+      checkoutForm.addEventListener("submit", async e => {
+        e.preventDefault();
+        const placeBtn = document.getElementById("place-order-btn");
+        placeBtn.disabled = true;
+        placeBtn.textContent = "Sending...";
+
+        const orderData = {
+          name: document.getElementById("customer-name").value.trim(),
+          phone: document.getElementById("customer-phone").value.trim(),
+          address: document.getElementById("customer-address").value.trim(),
+          notes: document.getElementById("customer-notes").value.trim(),
+          items: [...cart],
+          total: getCartTotal()
+        };
+
+        const success = await sendOrderToTelegram(orderData);
+
+        if (success) {
+          showToast("✅ Order sent to Telegram!");
+          cart = [];
+          saveCart();
+          renderCart();
+          closeCheckoutModal();
+          checkoutForm.reset();
+        } else {
+          showToast("❌ Failed to send. Check bot token.");
+          alert("Could not send order to Telegram.\n\n1. Make sure TELEGRAM_BOT_TOKEN is correct\n2. You must have started a chat with your bot first\n3. Check browser console for errors");
+        }
+
+        placeBtn.disabled = false;
+        placeBtn.textContent = "Place Order → Send to Telegram";
+      });
+
+      // Init
+      renderCart();
+    })();
+  </script>
+
+</body>
+</html>
